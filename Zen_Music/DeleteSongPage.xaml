@@ -1,0 +1,404 @@
+﻿<Window x:Class="Zen_Music.DeleteSongPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Delete Songs Page"
+        Width="860" Height="560"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        <!-- Цветова палитра -->
+        <SolidColorBrush x:Key="BgOuter"       Color="#1A1D27"/>
+        <SolidColorBrush x:Key="BgPanel"       Color="#22263A"/>
+        <SolidColorBrush x:Key="BgList"        Color="#1C1F2E"/>
+        <SolidColorBrush x:Key="BgRow"         Color="#252840"/>
+        <SolidColorBrush x:Key="BgRowHover"    Color="#2E3354"/>
+        <SolidColorBrush x:Key="BgRowSelected" Color="#343860"/>
+        <SolidColorBrush x:Key="AccentBlue"    Color="#8EBBFF"/>
+        <SolidColorBrush x:Key="TextPrimary"   Color="#EAEAF5"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#7B80A8"/>
+        <SolidColorBrush x:Key="TextItalic"    Color="#5C6180"/>
+        <SolidColorBrush x:Key="BorderColor"   Color="#2F3350"/>
+        <SolidColorBrush x:Key="DeleteRed"     Color="#E05A5A"/>
+        <SolidColorBrush x:Key="SearchBg"      Color="#DDDCDC"/>
+
+        <!-- Стил за ScrollBar -->
+        <Style x:Key="SlimScrollBar" TargetType="ScrollBar">
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid>
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border CornerRadius="3" Background="#3D4270" Margin="1"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SlimScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ScrollContentPresenter Grid.Column="0"/>
+                            <ScrollBar Grid.Column="1"
+                                       Style="{StaticResource SlimScrollBar}"
+                                       Orientation="Vertical"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стил за ListViewItem -->
+        <Style x:Key="SongRowStyle" TargetType="ListViewItem">
+            <Setter Property="Background"   Value="{StaticResource BgRow}"/>
+            <Setter Property="Foreground"   Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin"       Value="0,2,0,0"/>
+            <Setter Property="Padding"      Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Margin="0,2,0,0">
+                            <ContentPresenter Margin="0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BgRowHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BgRowSelected}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стил за Cancel бутон -->
+        <Style x:Key="CancelBtn" TargetType="Button">
+            <Setter Property="Background"   Value="{StaticResource AccentBlue}"/>
+            <Setter Property="Foreground"   Value="#FFFFFF"/>
+            <Setter Property="FontSize"     Value="14"/>
+            <Setter Property="FontWeight"   Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"       Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="22"
+                                Padding="32,10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#82BEFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#5495D4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стил за Save бутон (еднакъв с Cancel) -->
+        <Style x:Key="SaveBtn" TargetType="Button" BasedOn="{StaticResource CancelBtn}"/>
+
+        <!-- Стил за Delete иконата в реда -->
+        <Style x:Key="DeleteIcon" TargetType="Button">
+            <Setter Property="Background"   Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"       Value="Hand"/>
+            <Setter Property="Padding"      Value="6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="6">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#3A1E1E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <!-- Външен фон с мека сянка -->
+    <Border Background="{StaticResource BgOuter}"
+            CornerRadius="14">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="40" ShadowDepth="0" Opacity="0.6" Color="#000000"/>
+        </Border.Effect>
+
+        <Grid>
+            <!-- Drag заглавна лента -->
+            <Border Height="36" VerticalAlignment="Top"
+                    Background="Transparent"
+                    MouseLeftButtonDown="TitleBar_MouseDown"
+                    Cursor="SizeAll">
+                <TextBlock Text="Delete Songs Page"
+                           Foreground="{StaticResource TextSecondary}"
+                           FontSize="11"
+                           Margin="16,0,0,0"
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <!-- Вътрешен панел -->
+            <Border Margin="20,36,20,20"
+                    Background="{StaticResource BgPanel}"
+                    CornerRadius="12">
+
+                <Grid Margin="30,28,30,28">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Заглавие -->
+                        <RowDefinition Height="16"/>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Търсене -->
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="*"/>
+                        <!-- Списък -->
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Бутони -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Заглавие -->
+                    <TextBlock Grid.Row="0"
+                               Text="Delete Songs"
+                               Foreground="{StaticResource TextPrimary}"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"/>
+
+                    <!-- Лента за търсене -->
+                    <Border Grid.Row="2"
+                            Background="{StaticResource BgList}"
+                            CornerRadius="10"
+                            Padding="12,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Please search for a song to delete"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       FontSize="13"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+
+                            <TextBox x:Name="textBoxSearch"
+                                     Grid.Column="1"
+                                     Width="200" Height="34"
+                                     Background="{StaticResource SearchBg}"
+                                     Foreground="#22263A"
+                                     CaretBrush="{StaticResource AccentBlue}"
+                                     BorderBrush="{StaticResource BorderColor}"
+                                     BorderThickness="1"
+                                     Padding="10,0"
+                                     FontSize="13"
+                                     VerticalContentAlignment="Center"
+                                     TextChanged="textBoxSearch_TextChanged">
+                                <TextBox.Template>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="8">
+                                            <ScrollViewer x:Name="PART_ContentHost"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </TextBox.Template>
+                            </TextBox>
+
+                            <!-- Лупа икона -->
+                            <Border Grid.Column="2"
+                                    Width="34" Height="34"
+                                    Background="{StaticResource SearchBg}"
+                                    BorderBrush="{StaticResource BorderColor}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Margin="4,0,0,0">
+                                <TextBlock Text="🔍" FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Списък с песни -->
+                    <Border Grid.Row="4"
+                            Background="{StaticResource BgList}"
+                            CornerRadius="10"
+                            ClipToBounds="True">
+                        <ListView x:Name="listViewSongs"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  ItemContainerStyle="{StaticResource SongRowStyle}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  Padding="6,6,6,6"
+                                  SelectionMode="Single">
+                            <ListView.Resources>
+                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource SlimScrollViewer}"/>
+                            </ListView.Resources>
+                            
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="58" Margin="4,0,4,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="36"/>
+                                            <!-- # -->
+                                            <ColumnDefinition Width="52"/>
+                                            <!-- Снимка -->
+                                            <ColumnDefinition Width="*"/>
+                                            <!-- Заглавие + изпълнител -->
+                                            <ColumnDefinition Width="110"/>
+                                            <!-- Албум -->
+                                            <ColumnDefinition Width="54"/>
+                                            <!-- Продължителност -->
+                                            <ColumnDefinition Width="38"/>
+                                            <!-- Изтрий -->
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Номер -->
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding RowIndex}"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="13"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+
+                                        <!-- Обложка на албума -->
+                                        <Border Grid.Column="1"
+                                                Width="42" Height="42"
+                                                CornerRadius="6"
+                                                ClipToBounds="True"
+                                                VerticalAlignment="Center">
+                                            <Image Source="{Binding CoverImage}"
+                                                   Stretch="UniformToFill"/>
+                                        </Border>
+
+                                        <!-- Заглавие и изпълнител -->
+                                        <StackPanel Grid.Column="2"
+                                                    VerticalAlignment="Center"
+                                                    Margin="10,0,8,0">
+                                            <TextBlock Text="{Binding Title}"
+                                                       Foreground="{StaticResource TextPrimary}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding ArtistName}"
+                                                       Foreground="{StaticResource TextSecondary}"
+                                                       FontSize="12"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="0,2,0,0"/>
+                                        </StackPanel>
+
+                                        <!-- Албум -->
+                                        <TextBlock Grid.Column="3"
+                                                   Text="{Binding AlbumName}"
+                                                   Foreground="{StaticResource TextItalic}"
+                                                   FontStyle="Italic"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Margin="0,0,8,0"/>
+
+                                        <!-- Продължителност -->
+                                        <TextBlock Grid.Column="4"
+                                                   Text="{Binding Duration}"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"/>
+
+                                        <!-- Бутон изтрий -->
+                                        <Button Grid.Column="5"
+                                                Style="{StaticResource DeleteIcon}"
+                                                Tag="{Binding SongId}"
+                                                Click="DeleteRow_Click"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center">
+                                            <Path Data="M3,6 H21 M8,6 V4 A1,1 0 0 1 9,3 H15 A1,1 0 0 1 16,4 V6
+                                                        M19,6 L18,20 A2,2 0 0 1 16,22 H8 A2,2 0 0 1 6,20 L5,6 Z
+                                                        M10,11 V17 M14,11 V17"
+                                                  Stroke="{StaticResource DeleteRed}"
+                                                  StrokeThickness="1.6"
+                                                  StrokeLineJoin="Round"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round"
+                                                  Width="16" Height="18"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Border>
+
+                    <!-- Бутони Cancel / Save -->
+                    <StackPanel Grid.Row="6"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                >
+                        <Button x:Name="buttonCancel"
+                                Content="Cancel"
+                                Style="{StaticResource CancelBtn}"
+                                Width="150"
+                                Click="buttonCancel_Click"/>
+                        <Button x:Name="buttonSave"
+                                Content="Save"
+                                Style="{StaticResource SaveBtn}"
+                                Width="150"
+                                Click="buttonDelete_Click"/>
+                    </StackPanel>
+
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

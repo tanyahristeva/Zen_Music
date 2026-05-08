@@ -1,0 +1,210 @@
+﻿<Window x:Class="Zen_Music.SignInPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sign In"
+        Width="660" Height="474"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="BgPanel"     Color="#1E2236"/>
+        <SolidColorBrush x:Key="AccentBlue"  Color="#8EBBFF"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#EAEAF5"/>
+        <SolidColorBrush x:Key="TextMuted"   Color="#7B80A8"/>
+        <SolidColorBrush x:Key="InputBg"     Color="#DDDCDC"/>
+
+        <Style x:Key="ZenInput" TargetType="TextBox">
+            <Setter Property="Background"             Value="{StaticResource InputBg}"/>
+            <Setter Property="Foreground"             Value="#1A1D2E"/>
+            <Setter Property="BorderThickness"        Value="0"/>
+            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="Height"                 Value="30"/>
+            <Setter Property="Padding"                Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ZenPassword" TargetType="PasswordBox">
+            <Setter Property="Background"             Value="{StaticResource InputBg}"/>
+            <Setter Property="Foreground"             Value="#1A1D2E"/>
+            <Setter Property="BorderThickness"        Value="0"/>
+            <Setter Property="FontSize"               Value="13"/>
+            <Setter Property="Height"                 Value="30"/>
+            <Setter Property="Padding"                Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SignInBtn" TargetType="Button">
+            <Setter Property="Background"      Value="{StaticResource AccentBlue}"/>
+            <Setter Property="Foreground"      Value="#FFF"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="14" Padding="20,6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#82BEFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="12" ClipToBounds="True">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Лява страна -->
+            <Border Grid.Column="0" CornerRadius="12,0,0,12">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2A3A6E" Offset="0"/>
+                        <GradientStop Color="#1A2550" Offset="0.5"/>
+                        <GradientStop Color="#8BAFD4" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Canvas>
+                        <Path Canvas.Left="-40" Canvas.Top="20" Fill="#3A5A9A" Opacity="0.5">
+                            <Path.Data>
+                                <PathGeometry>
+                                    <PathFigure StartPoint="0,260">
+                                        <BezierSegment Point1="80,160" Point2="160,310" Point3="340,210"/>
+                                        <LineSegment Point="340,360"/>
+                                        <LineSegment Point="0,360"/>
+                                    </PathFigure>
+                                </PathGeometry>
+                            </Path.Data>
+                        </Path>
+                        <Path Canvas.Left="-40" Canvas.Top="57" Fill="#5A80C0" Opacity="0.4" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Path.Data>
+                                <PathGeometry>
+                                    <PathFigure StartPoint="0,280">
+                                        <BezierSegment Point1="100,180" Point2="200,330" Point3="380,230"/>
+                                        <LineSegment Point="380,360"/>
+                                        <LineSegment Point="0,360"/>
+                                    </PathFigure>
+                                </PathGeometry>
+                            </Path.Data>
+                        </Path>
+                        <Path Canvas.Left="-40" Canvas.Top="114" Fill="#7AAAD8" Opacity="0.35" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <Path.Data>
+                                <PathGeometry>
+                                    <PathFigure StartPoint="0,300">
+                                        <BezierSegment Point1="120,200" Point2="220,350" Point3="400,250"/>
+                                        <LineSegment Point="400,360"/>
+                                        <LineSegment Point="0,360"/>
+                                    </PathFigure>
+                                </PathGeometry>
+                            </Path.Data>
+                        </Path>
+                    </Canvas>
+                    <StackPanel VerticalAlignment="Center" Margin="36,0,20,60">
+                        <TextBlock>
+                            <Run Text="Welcome to " Foreground="White" FontSize="22" FontWeight="Bold"/>
+                            <Run Text="ZEN" Foreground="{StaticResource AccentBlue}" FontSize="22" FontWeight="Bold"/>
+                        </TextBlock>
+                        <Border Width="180" Height="1" HorizontalAlignment="Left"
+                                Margin="0,8,0,0" Background="#4A6A9A"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Дясна страна -->
+            <Border Grid.Column="1" Background="{StaticResource BgPanel}" CornerRadius="0,12,12,0">
+                <Grid>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="0,10,10,0" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand"
+                            Click="btnSettings_Click">
+                        <TextBlock Text="⚙" FontSize="16" Foreground="{StaticResource TextMuted}"/>
+                    </Button>
+
+                    <StackPanel VerticalAlignment="Center" Margin="40,0,40,0">
+                        <TextBlock Text="Sign In" Foreground="{StaticResource TextPrimary}"
+                                   FontSize="20" FontWeight="Bold"
+                                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Username"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       FontSize="13" VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" x:Name="txtUsername"
+                                     Style="{StaticResource ZenInput}"/>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Password"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       FontSize="13" VerticalAlignment="Center"/>
+                            <PasswordBox Grid.Column="1" x:Name="txtPassword"
+                                         Style="{StaticResource ZenPassword}"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Background="Transparent"
+                                    BorderThickness="0" Cursor="Hand"
+                                    HorizontalAlignment="Left"
+                                    Click="btnWantMember_Click">
+                                <TextBlock Foreground="{StaticResource TextMuted}"
+                                           FontSize="11" TextWrapping="Wrap"
+                                           Text="Want to be&#x0a;a member?"/>
+                            </Button>
+                            <Button Grid.Column="1" Content="Sign In"
+                                    Style="{StaticResource SignInBtn}"
+                                    Click="btnSignIn_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
