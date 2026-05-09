@@ -391,7 +391,7 @@
                                 Width="150"
                                 Click="buttonCancel_Click"/>
                         <Button x:Name="buttonSave"
-                                Content="Save"
+                                Content="Delete"
                                 Style="{StaticResource SaveBtn}"
                                 Width="150"
                                 Click="buttonDelete_Click"/>

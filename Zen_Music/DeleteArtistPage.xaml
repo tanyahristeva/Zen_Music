@@ -309,7 +309,7 @@
                                 HorizontalAlignment="Center">
                         <Button Content="Cancel" Style="{StaticResource PrimaryBtn}"
                                 Width="150" Click="buttonCancel_Click"/>
-                        <Button Content="Save" Style="{StaticResource PrimaryBtn}"
+                        <Button Content="Delete" Style="{StaticResource PrimaryBtn}"
                                 Width="150" Click="buttonDelete_Click"/>
                     </StackPanel>
                 </Grid>

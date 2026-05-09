@@ -267,5 +267,10 @@ namespace Zen_Music.AlbumPages
             this.DialogResult = false;
             this.Close();
         }
+
+        private void textBoxAlbumName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
     }
 }

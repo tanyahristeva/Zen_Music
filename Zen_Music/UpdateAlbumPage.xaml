@@ -208,21 +208,21 @@
                                            FontSize="14" FontWeight="SemiBold"
                                            VerticalAlignment="Top" Margin="0,26,0,0"/>
                                 <TextBox x:Name="textBoxAlbumTitle" Height="36"
-                                         Style="{StaticResource ZenTextBox}" Margin="120,17,10,7" Grid.ColumnSpan="2"/>
+                                         Style="{StaticResource ZenTextBox}" Margin="120,17,10,7" Grid.ColumnSpan="2" TextChanged="textBoxAlbumTitle_TextChanged_1"/>
                             </Grid>
                         </StackPanel>
 
                         <!-- Дясна колона -->
                         <StackPanel Grid.Column="2" VerticalAlignment="Center">
                             <!-- Year -->
-                            <StackPanel>
+                            <StackPanel Width="253">
                                 <TextBlock Text="Release year:"
                                            Foreground="{StaticResource TextPrimary}"
                                            FontSize="14" FontWeight="SemiBold"
                                            Margin="0,0,0,8"/>
                                 <TextBox x:Name="textBoxYear"
                                          Height="36"
-                                         Style="{StaticResource ZenTextBox}"/>
+                                         Style="{StaticResource ZenTextBox}" Width="255"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>

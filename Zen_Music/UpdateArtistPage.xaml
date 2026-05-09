@@ -211,10 +211,9 @@
                                 <TextBlock Grid.Column="0" Text="Artist name:"
                                            Foreground="{StaticResource TextPrimary}"
                                            FontSize="14" FontWeight="SemiBold"
-                                           VerticalAlignment="Top" Margin="0,33,0,0"/>
-                                <TextBox x:Name="textBoxArtistName"
-                                         Grid.Column="1" Height="36"
-                                         Style="{StaticResource ZenTextBox}" Margin="0,17,0,7"/>
+                                           VerticalAlignment="Top" Margin="0,26,0,0"/>
+                                <TextBox x:Name="textBoxArtistName" Height="36"
+                                         Style="{StaticResource ZenTextBox}" Margin="114,17,0,7" Grid.ColumnSpan="2" TextChanged="textBoxArtistName_TextChanged"/>
                             </Grid>
                         </StackPanel>
 

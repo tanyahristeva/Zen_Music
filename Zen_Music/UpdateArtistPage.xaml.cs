@@ -284,5 +284,10 @@ namespace Zen_Music
             this.DialogResult = false;
             this.Close();
         }
+
+        private void textBoxArtistName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
     }
 }

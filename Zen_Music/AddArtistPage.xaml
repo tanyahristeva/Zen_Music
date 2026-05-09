@@ -124,7 +124,7 @@
             </Border>
 
             <!-- Вътрешен панел -->
-            <Border Margin="20,36,20,20"
+            <Border Margin="20,46,20,10"
                     Background="{StaticResource BgPanel}"
                     CornerRadius="12">
 
@@ -145,7 +145,7 @@
                                Text="Upload Artist"
                                Foreground="{StaticResource TextPrimary}"
                                FontSize="28" FontWeight="Bold"
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center" Margin="0,12,0,12" Grid.RowSpan="2"/>
 
                     <!-- Основна решетка с форма -->
                     <Grid Grid.Row="2">
@@ -179,8 +179,8 @@
                                         CornerRadius="36"
                                         Background="#DDDCDC"
                                         ClipToBounds="True"
-                                        HorizontalAlignment="Left" Margin="0,-9,0,9">
-                                    <Image x:Name="imageArtist" Stretch="UniformToFill"/>
+                                        HorizontalAlignment="Left" Margin="20,-4,0,4">
+                                    <Image x:Name="imageArtist" Stretch="UniformToFill" Margin="7,0,1,0"/>
                                 </Border>
 
                                 <Button Grid.Column="1"
@@ -188,7 +188,7 @@
                                         Style="{StaticResource SmallBtn}"
                                         Click="buttonUpload_Click"
                                         VerticalAlignment="Top"
-                                        Margin="134,16,12,0" Grid.ColumnSpan="2"/>
+                                        Margin="122,16,24,0"/>
                             </Grid>
 
                             <!-- Artist name -->

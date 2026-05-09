@@ -22,7 +22,7 @@
         <!-- TextBox -->
         <Style x:Key="ZenTextBox" TargetType="TextBox">
             <Setter Property="Background"      Value="{StaticResource InputBg}"/>
-            <Setter Property="Foreground"      Value="#22263A"/>
+            <Setter Property="Foreground"      Value="Black"/>
             <Setter Property="CaretBrush"      Value="{StaticResource AccentBlue}"/>
             <Setter Property="BorderBrush"     Value="{StaticResource InputBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -204,7 +204,7 @@
                                            VerticalAlignment="Center"/>
                                 <TextBox x:Name="textBoxAlbumName"
                                          Grid.Column="1"
-                                         Style="{StaticResource ZenTextBox}"/>
+                                         Style="{StaticResource ZenTextBox}" TextChanged="textBoxAlbumName_TextChanged"/>
                             </Grid>
 
                             <!-- Artist name (ComboBox) -->

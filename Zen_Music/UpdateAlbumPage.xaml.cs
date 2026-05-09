@@ -203,5 +203,10 @@ namespace Zen_Music.AlbumPages
         {
 
         }
+
+        private void textBoxAlbumTitle_TextChanged_1(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
     }
 }
