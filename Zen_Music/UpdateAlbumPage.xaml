@@ -53,7 +53,7 @@
         <!-- TextBox стил -->
         <Style x:Key="ZenTextBox" TargetType="TextBox">
             <Setter Property="Background"      Value="{StaticResource InputBg}"/>
-            <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+            <Setter Property="Foreground"      Value="{StaticResource InputBorder}"/>
             <Setter Property="CaretBrush"      Value="{StaticResource AccentBlue}"/>
             <Setter Property="BorderBrush"     Value="{StaticResource InputBorder}"/>
             <Setter Property="BorderThickness" Value="1"/>
