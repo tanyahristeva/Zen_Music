@@ -241,6 +241,16 @@ namespace Zen_Music
             this.Close();
         }
 
+        // 
+        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Normal)
+                this.WindowState = WindowState.Maximized;
+            else
+                this.WindowState = WindowState.Normal;
+        }
+
+
         private static BitmapImage LoadImageFromPath(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return null;
