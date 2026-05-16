@@ -18,6 +18,13 @@ namespace Zen_Music
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
 
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var signIn = new SignInPage();
+            signIn.Show();
+            this.Close();
+        }
+
         private void btnLogIn_Click(object sender, RoutedEventArgs e)
         {
             string username = txtUsername.Text.Trim();
@@ -83,6 +90,7 @@ namespace Zen_Music
                 MessageBox.Show("Error: " + ex.Message, "Database Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
         }
     }
 }

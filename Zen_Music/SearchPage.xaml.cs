@@ -404,9 +404,13 @@ namespace Zen_Music
             signIn.Show();
             this.Close();
         }
+
+        // tuk
         private void txtZen_Click(object sender, MouseButtonEventArgs e)
         {
+            WindowHelper.SaveState(this);
             var home = new HomePageMain();
+            WindowHelper.ApplyState(home);
             home.Show();
             this.Close();
         }
@@ -427,6 +431,32 @@ namespace Zen_Music
                 }
             }
             catch { return null; }
+        }
+
+
+        private bool _isFullScreen = false;
+        private WindowState _prevState;
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F11)
+                WindowHelper.ToggleFullScreen(this);
+        }
+
+        private void ToggleFullScreen()
+        {
+            if (!_isFullScreen)
+            {
+                _prevState = this.WindowState;
+                this.WindowState = WindowState.Maximized;
+                _isFullScreen = true;
+            }
+            else
+            {
+                this.WindowState = _prevState == WindowState.Maximized
+                    ? WindowState.Normal : _prevState;
+                _isFullScreen = false;
+            }
         }
     }
 }

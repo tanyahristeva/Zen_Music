@@ -132,6 +132,7 @@
       <DependentUpon>UploadSongPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="User.cs" />
+    <Compile Include="WindowHelper.cs" />
     <Page Include="AddArtistPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -239,6 +240,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="pics\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -87,7 +87,7 @@
     <Border CornerRadius="12" ClipToBounds="True">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="340"/>
+                <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -217,6 +217,7 @@
                             <Button Grid.Column="0" Background="Transparent"
                                     BorderThickness="0" Cursor="Hand"
                                     HorizontalAlignment="Left"
+                                    Margin="80,0,0,0"
                                     Click="btnAlreadyMember_Click">
                                 <TextBlock Foreground="{StaticResource TextMuted}"
                                            FontSize="11" TextWrapping="Wrap"

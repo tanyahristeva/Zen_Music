@@ -2,9 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Search Page"
-        Width="820" Height="540"
+        Width="1200" Height="750"
+        MinWidth="900" MinHeight="600"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
+        KeyDown="Window_KeyDown"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent">

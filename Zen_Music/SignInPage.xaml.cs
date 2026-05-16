@@ -87,7 +87,10 @@ namespace Zen_Music
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             var adminLogin = new AdminLoginPage();
-            adminLogin.ShowDialog();
+            adminLogin.Left = this.Left;
+            adminLogin.Top = this.Top;
+            adminLogin.Show();
+            this.Close();
         }
     }
 }
