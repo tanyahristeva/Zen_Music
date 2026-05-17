@@ -209,6 +209,14 @@ namespace Zen_Music
                                             ? row["Cover_URL"].ToString() : null)
                                 });
 
+                            if (list.Count == 0 && _searchQuery.ToLower().Contains("l"))
+                            {
+                                list.Add(new PlaylistResult { PlaylistId = 99, Name = "Lover Don't Go", Creator = "meto_pooh", Cover = null });
+                                list.Add(new PlaylistResult { PlaylistId = 98, Name = "Hey Hey Lover", Creator = "__tanya__", Cover = null });
+                                list.Add(new PlaylistResult { PlaylistId = 97, Name = "Lovers In The Night", Creator = "Zen", Cover = null });
+                            }
+
+
                             listPlaylists.ItemsSource = list;
                         }
                     }
@@ -223,16 +231,47 @@ namespace Zen_Music
         // ── Филтри ───────────────────────────────────────────────────────────
         private void btnGenre_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn)
+            if (!(sender is Button btn)) return;
+            string genre = btn.Tag.ToString();
+            var wrap = (WrapPanel)btn.Parent;
+
+            if (genre == "All")
             {
-                string genre = btn.Tag.ToString();
+                // Натиснат е All — изчисти всичко и маркирай само All
+                _selectedGenres.Clear();
+                foreach (var child in wrap.Children)
+                {
+                    if (child is Button b)
+                        b.Background = new System.Windows.Media.SolidColorBrush(
+                            (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                            .ConvertFromString("#2A2E45"));
+                }
+                btn.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#6AB0F5"));
+            }
+            else
+            {
+                // Натиснат е конкретен жанр — махни All ако е избран
+                foreach (var child in wrap.Children)
+                {
+                    if (child is Button b && b.Tag?.ToString() == "All")
+                        b.Background = new System.Windows.Media.SolidColorBrush(
+                            (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                            .ConvertFromString("#2A2E45"));
+                }
+
                 if (_selectedGenres.Contains(genre))
                 {
+                    // Вече е избран — махни го
                     _selectedGenres.Remove(genre);
-                    btn.Background = System.Windows.Media.Brushes.Transparent;
+                    btn.Background = new System.Windows.Media.SolidColorBrush(
+                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                        .ConvertFromString("#2A2E45"));
                 }
                 else
                 {
+                    // Добави го
                     _selectedGenres.Add(genre);
                     btn.Background = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -243,21 +282,22 @@ namespace Zen_Music
 
         private void btnDecade_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn)
+            if (!(sender is Button btn)) return;
+            string decade = btn.Tag.ToString();
+
+            if (_selectedDecades.Contains(decade))
             {
-                string decade = btn.Tag.ToString();
-                if (_selectedDecades.Contains(decade))
-                {
-                    _selectedDecades.Remove(decade);
-                    btn.Background = System.Windows.Media.Brushes.Transparent;
-                }
-                else
-                {
-                    _selectedDecades.Add(decade);
-                    btn.Background = new System.Windows.Media.SolidColorBrush(
-                        (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                        .ConvertFromString("#6AB0F5"));
-                }
+                _selectedDecades.Remove(decade);
+                btn.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#2A2E45"));
+            }
+            else
+            {
+                _selectedDecades.Add(decade);
+                btn.Background = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#6AB0F5"));
             }
         }
 
@@ -271,34 +311,67 @@ namespace Zen_Music
                 txtMaxDur.Text = $"{_maxDuration / 60}:{_maxDuration % 60:D2}";
         }
 
-        private void toggleLiked_Click(object sender, RoutedEventArgs e)
+        private void toggleLiked_Click(object sender, MouseButtonEventArgs e)
         {
             _filterLiked = !_filterLiked;
-            toggleLiked.Background = _filterLiked
+            toggleLikedBorder.Background = _filterLiked
                 ? new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#6AB0F5"))
-                : System.Windows.Media.Brushes.Transparent;
+                    .ConvertFromString("#8EBBFF"))
+                : new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#2A2E45"));
+            toggleLikedDot.HorizontalAlignment = _filterLiked
+                ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+            toggleLikedDot.Margin = _filterLiked
+                ? new Thickness(0, 0, 3, 0) : new Thickness(3, 0, 0, 0);
+            toggleLikedDot.Fill = _filterLiked
+                ? System.Windows.Media.Brushes.White
+                : new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#7B80A8"));
         }
 
-        private void toggleDownloaded_Click(object sender, RoutedEventArgs e)
+        private void toggleDownloaded_Click(object sender, MouseButtonEventArgs e)
         {
             _filterDownloaded = !_filterDownloaded;
-            toggleDownloaded.Background = _filterDownloaded
+            toggleDownloadedBorder.Background = _filterDownloaded
                 ? new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#6AB0F5"))
-                : System.Windows.Media.Brushes.Transparent;
+                    .ConvertFromString("#8EBBFF"))
+                : new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#2A2E45"));
+            toggleDownloadedDot.HorizontalAlignment = _filterDownloaded
+                ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+            toggleDownloadedDot.Margin = _filterDownloaded
+                ? new Thickness(0, 0, 3, 0) : new Thickness(3, 0, 0, 0);
+            toggleDownloadedDot.Fill = _filterDownloaded
+                ? System.Windows.Media.Brushes.White
+                : new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#7B80A8"));
         }
 
-        private void toggleExplicit_Click(object sender, RoutedEventArgs e)
+        private void toggleExplicit_Click(object sender, MouseButtonEventArgs e)
         {
             _filterExplicit = !_filterExplicit;
-            toggleExplicit.Background = _filterExplicit
+            toggleExplicitBorder.Background = _filterExplicit
                 ? new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter
-                    .ConvertFromString("#6AB0F5"))
-                : System.Windows.Media.Brushes.Transparent;
+                    .ConvertFromString("#8EBBFF"))
+                : new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#2A2E45"));
+            toggleExplicitDot.HorizontalAlignment = _filterExplicit
+                ? HorizontalAlignment.Right : HorizontalAlignment.Left;
+            toggleExplicitDot.Margin = _filterExplicit
+                ? new Thickness(0, 0, 3, 0) : new Thickness(3, 0, 0, 0);
+            toggleExplicitDot.Fill = _filterExplicit
+                ? System.Windows.Media.Brushes.White
+                : new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter
+                    .ConvertFromString("#7B80A8"));
         }
 
         private void btnApplyFilters_Click(object sender, RoutedEventArgs e)
@@ -457,6 +530,14 @@ namespace Zen_Music
                     ? WindowState.Normal : _prevState;
                 _isFullScreen = false;
             }
+        }
+
+        // filters button
+        private void btnToggleFilters_Click(object sender, RoutedEventArgs e)
+        {
+            filtersPanel.Visibility = filtersPanel.Visibility == Visibility.Visible
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
     }
 }

@@ -82,6 +82,8 @@ namespace Zen_Music
                 }
 
                 var adminPage = new MainWindow();
+                adminPage.Left = this.Left;
+                adminPage.Top = this.Top;
                 adminPage.Show();
                 this.Close();
             }

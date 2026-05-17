@@ -81,8 +81,13 @@ namespace Zen_Music
             updateAlbumSearchPage.ShowDialog();
         }
 
+        // leave admin mode button
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            var signIn = new SignInPage();
+            signIn.Left = this.Left;
+            signIn.Top = this.Top;
+            signIn.Show();
             this.Close();
         }
     }
