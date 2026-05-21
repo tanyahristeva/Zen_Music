@@ -244,5 +244,10 @@
   <ItemGroup>
     <Folder Include="pics\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Songs\lover.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
