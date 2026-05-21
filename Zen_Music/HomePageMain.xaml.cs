@@ -58,7 +58,6 @@ namespace Zen_Music
         {
             var scrollViewer = sender as ScrollViewer;
             if (scrollViewer == null) return;
-
             scrollViewer.ScrollToVerticalOffset(
                 scrollViewer.VerticalOffset - e.Delta / 3.0);
             e.Handled = true;
@@ -73,7 +72,7 @@ namespace Zen_Music
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     string query = @"
-                        SELECT TOP 6 al.ID, al.Title, al.Cover_URL, ar.Name AS ArtistName
+                        SELECT TOP 15 al.ID, al.Title, al.Cover_URL, ar.Name AS ArtistName
                         FROM Albums al
                         JOIN AlbumArtists aa ON aa.Album_ID = al.ID
                         JOIN Artists ar ON ar.ID = aa.Artist_ID
@@ -125,7 +124,7 @@ namespace Zen_Music
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     string query = @"
-                        SELECT TOP 6 al.ID, al.Title, al.Cover_URL, ar.Name AS ArtistName
+                        SELECT TOP 15 al.ID, al.Title, al.Cover_URL, ar.Name AS ArtistName
                         FROM Albums al
                         LEFT JOIN AlbumArtists aa ON aa.Album_ID = al.ID
                         LEFT JOIN Artists ar ON ar.ID = aa.Artist_ID
@@ -162,7 +161,7 @@ namespace Zen_Music
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     string query = @"
-                        SELECT TOP 6 s.ID, s.Title, s.Image_Data, ar.Name AS ArtistName
+                        SELECT TOP 15 s.ID, s.Title, s.Image_Data, ar.Name AS ArtistName
                         FROM Songs s
                         LEFT JOIN SongArtists sa ON sa.Song_ID = s.ID AND sa.Role = 'Main'
                         LEFT JOIN Artists ar ON ar.ID = sa.Artist_ID
@@ -214,7 +213,7 @@ namespace Zen_Music
         //        using (SqlConnection conn = new SqlConnection(cs))
         //        {
         //            string query = @"
-        //        SELECT TOP 8 p.ID, p.Name, p.Cover_URL, u.Username AS Creator
+        //        SELECT TOP 15 p.ID, p.Name, p.Cover_URL, u.Username AS Creator
         //        FROM Playlists p
         //        LEFT JOIN Users u ON u.ID = p.Creator_ID
         //        WHERE p.Is_Public = 1
@@ -255,6 +254,12 @@ namespace Zen_Music
                 new PlaylistCard { PlaylistId = 2, Name = "Top Hits", Creator = "zen", Cover = null },
                 new PlaylistCard { PlaylistId = 3, Name = "Late Night", Creator = "zen", Cover = null },
                 new PlaylistCard { PlaylistId = 4, Name = "Workout", Creator = "zen", Cover = null },
+                new PlaylistCard { PlaylistId = 5, Name = "Weekly Hits", Creator = "zen", Cover = null },
+                new PlaylistCard { PlaylistId = 6, Name = "Rhythm", Creator = "zen", Cover = null },
+                new PlaylistCard { PlaylistId = 7, Name = "Slow and Steady", Creator = "zen", Cover = null },
+                new PlaylistCard { PlaylistId = 8, Name = "Race", Creator = "zen", Cover = null },
+                new PlaylistCard { PlaylistId = 9, Name = "New Music Friday", Creator = "zen", Cover = null },
+                new PlaylistCard { PlaylistId = 10, Name = "Pop Off", Creator = "zen", Cover = null }
             };
 
             listPlaylists.ItemsSource = list;
@@ -412,6 +417,32 @@ namespace Zen_Music
         {
             if (e.Key == Key.F11)
                 WindowHelper.ToggleFullScreen(this);
+        }
+
+
+        // scroll left right
+        private void ForYou_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var sv = sender as ScrollViewer;
+            if (sv == null) return;
+            sv.ScrollToHorizontalOffset(sv.HorizontalOffset - e.Delta / 3.0);
+            e.Handled = true;
+        }
+
+        private void Trending_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var sv = sender as ScrollViewer;
+            if (sv == null) return;
+            sv.ScrollToHorizontalOffset(sv.HorizontalOffset - e.Delta / 3.0);
+            e.Handled = true;
+        }
+
+        private void Playlists_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var sv = sender as ScrollViewer;
+            if (sv == null) return;
+            sv.ScrollToHorizontalOffset(sv.HorizontalOffset - e.Delta / 3.0);
+            e.Handled = true;
         }
 
     }

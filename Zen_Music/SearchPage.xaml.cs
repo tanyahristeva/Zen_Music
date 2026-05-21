@@ -24,11 +24,11 @@ namespace Zen_Music
             public bool IsDownloaded { get; set; }
         }
 
-        public class PlaylistResult
+        public class AlbumResult
         {
-            public int PlaylistId { get; set; }
-            public string Name { get; set; }
-            public string Creator { get; set; }
+            public int AlbumId { get; set; }
+            public string Title { get; set; }
+            public string Artist { get; set; }
             public BitmapImage Cover { get; set; }
         }
 
@@ -72,7 +72,7 @@ namespace Zen_Music
 
             txtResultsLabel.Text = $"Results for '{_searchQuery}'";
             LoadSongs();
-            LoadPlaylists();
+            LoadAlbums();
         }
 
         private void LoadSongs()
@@ -176,57 +176,90 @@ namespace Zen_Music
             return query;
         }
 
-        private void LoadPlaylists()
+        private void LoadAlbums()
         {
             try
             {
                 string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
-                    string query = @"
-                        SELECT p.ID, p.Name, p.Cover_URL, u.Username AS Creator
-                        FROM Playlists p
-                        LEFT JOIN Users u ON u.ID = p.Creator_ID
-                        WHERE p.Name LIKE @Query AND p.Is_Public = 1
-                        ORDER BY p.Name";
+                    conn.Open();
+                    string query = BuildAlbumQuery(); // Извиква новия метод за филтри
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Query", "%" + _searchQuery + "%");
+                        cmd.Parameters.AddWithValue("@UserId", SessionManager.UserId);
+
                         using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();
                             adapter.Fill(dt);
 
-                            var list = new List<PlaylistResult>();
+                            var list = new List<AlbumResult>();
                             foreach (DataRow row in dt.Rows)
-                                list.Add(new PlaylistResult
+                                list.Add(new AlbumResult
                                 {
-                                    PlaylistId = Convert.ToInt32(row["ID"]),
-                                    Name = row["Name"].ToString(),
-                                    Creator = row["Creator"].ToString(),
-                                    Cover = LoadImageFromPath(row["Cover_URL"] != DBNull.Value
-                                            ? row["Cover_URL"].ToString() : null)
+                                    AlbumId = Convert.ToInt32(row["ID"]),
+                                    Title = row["Title"].ToString(),
+                                    Artist = row["ArtistName"] != DBNull.Value ? row["ArtistName"].ToString() : "Unknown Artist",
+                                    Cover = LoadImageFromPath(row["Cover_URL"] != DBNull.Value ? row["Cover_URL"].ToString() : null)
                                 });
 
-                            if (list.Count == 0 && _searchQuery.ToLower().Contains("l"))
-                            {
-                                list.Add(new PlaylistResult { PlaylistId = 99, Name = "Lover Don't Go", Creator = "meto_pooh", Cover = null });
-                                list.Add(new PlaylistResult { PlaylistId = 98, Name = "Hey Hey Lover", Creator = "__tanya__", Cover = null });
-                                list.Add(new PlaylistResult { PlaylistId = 97, Name = "Lovers In The Night", Creator = "Zen", Cover = null });
-                            }
-
-
-                            listPlaylists.ItemsSource = list;
+                            listAlbums.ItemsSource = list;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading playlists: " + ex.Message);
+                MessageBox.Show("Error loading albums: " + ex.Message);
             }
         }
+
+        private string BuildAlbumQuery()
+        {
+            string query = @"
+                SELECT DISTINCT al.ID, al.Title, al.Cover_URL, ar.Name AS ArtistName, al.Release_Date
+                FROM Albums al
+                LEFT JOIN AlbumArtists aa ON aa.Album_ID = al.ID
+                LEFT JOIN Artists ar ON ar.ID = aa.Artist_ID
+                WHERE al.Title LIKE @Query ";
+
+            if (_filterLiked)
+                query += " AND EXISTS (SELECT 1 FROM Likes l JOIN Songs s ON l.Song_ID = s.ID WHERE s.Album_ID = al.ID AND l.User_ID = @UserId)";
+
+            if (_filterDownloaded)
+                query += " AND EXISTS (SELECT 1 FROM Downloads d JOIN Songs s ON d.Song_ID = s.ID WHERE s.Album_ID = al.ID AND d.User_ID = @UserId)";
+
+            if (_filterExplicit)
+                query += " AND EXISTS (SELECT 1 FROM Songs s WHERE s.Album_ID = al.ID AND s.Is_Explicit = 1)";
+
+            if (_selectedGenres.Count > 0)
+            {
+                string genres = "'" + string.Join("','", _selectedGenres) + "'";
+                query += $" AND EXISTS (SELECT 1 FROM Songs s JOIN SongGenres sg ON sg.Song_ID = s.ID JOIN Genres g ON g.ID = sg.Genre_ID WHERE s.Album_ID = al.ID AND g.Name IN ({genres}))";
+            }
+
+            if (_selectedDecades.Count > 0)
+            {
+                var decadeConditions = new List<string>();
+                foreach (string decade in _selectedDecades)
+                {
+                    if (int.TryParse(decade.Replace("s", ""), out int year))
+                        decadeConditions.Add($"(YEAR(al.Release_Date) >= {year} AND YEAR(al.Release_Date) < {year + 10})");
+                }
+                if (decadeConditions.Count > 0)
+                    query += " AND (" + string.Join(" OR ", decadeConditions) + ")";
+            }
+
+            query += " ORDER BY al.Title";
+
+            return query;
+        }
+
+
+
 
         // ── Филтри ───────────────────────────────────────────────────────────
         private void btnGenre_Click(object sender, RoutedEventArgs e)
