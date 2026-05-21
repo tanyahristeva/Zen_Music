@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Zen_Music
 {
@@ -26,6 +28,7 @@ namespace Zen_Music
             public int SongId { get; set; }
             public string Title { get; set; }
             public string Artist { get; set; }
+            public string FileUrl { get; set; }
             public BitmapImage Cover { get; set; }
         }
 
@@ -38,6 +41,10 @@ namespace Zen_Music
 
         private List<EventCard> _events = new List<EventCard>();
         private int _currentEventIndex = 0;
+        private MediaPlayer _player = new MediaPlayer();
+        private SongCard _currentSong;
+        private bool _isPlaying = false;
+        private DispatcherTimer _timer = new DispatcherTimer();
 
         public HomePageMain()
         {
@@ -46,6 +53,9 @@ namespace Zen_Music
             LoadTrending();
             LoadEvents();
             LoadPlaylists();
+            _timer.Interval = TimeSpan.FromMilliseconds(100);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
 
         private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
@@ -161,7 +171,12 @@ namespace Zen_Music
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     string query = @"
-                        SELECT TOP 15 s.ID, s.Title, s.Image_Data, ar.Name AS ArtistName
+                        SELECT TOP 15
+                        s.ID,
+                        s.Title,
+                        s.File_URL,
+                        s.Image_Data,
+                        ar.Name AS ArtistName
                         FROM Songs s
                         LEFT JOIN SongArtists sa ON sa.Song_ID = s.ID AND sa.Role = 'Main'
                         LEFT JOIN Artists ar ON ar.ID = sa.Artist_ID
@@ -178,10 +193,16 @@ namespace Zen_Music
                             {
                                 SongId = Convert.ToInt32(row["ID"]),
                                 Title = row["Title"].ToString(),
+
+                                FileUrl = row["File_URL"] != DBNull.Value
+                                 ? row["File_URL"].ToString() : "",
+
                                 Artist = row["ArtistName"] != DBNull.Value
-                                         ? row["ArtistName"].ToString() : "",
-                                Cover = LoadImageFromBytes(row["Image_Data"] != DBNull.Value
-                                        ? (byte[])row["Image_Data"] : null)
+                                ? row["ArtistName"].ToString() : "",
+
+                                Cover = LoadImageFromBytes(
+                                row["Image_Data"] != DBNull.Value
+                                ? (byte[])row["Image_Data"] : null)
                             });
 
                         listTrending.ItemsSource = list;
@@ -443,6 +464,129 @@ namespace Zen_Music
             if (sv == null) return;
             sv.ScrollToHorizontalOffset(sv.HorizontalOffset - e.Delta / 3.0);
             e.Handled = true;
+        }
+
+        private void SongCard_Click(object sender, MouseButtonEventArgs e)
+        {
+            FrameworkElement fe = sender as FrameworkElement;
+
+            if (fe?.DataContext is SongCard song)
+            {
+                PlaySong(song);
+            }
+        }
+
+        private void PlaySong(SongCard song)
+        {
+            try
+            {
+                if (song == null)
+                    return;
+
+                if (string.IsNullOrWhiteSpace(song.FileUrl))
+                {
+                    MessageBox.Show("No file path.");
+                    return;
+                }
+
+                string fullPath = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    song.FileUrl
+                );
+
+                if (!File.Exists(fullPath))
+                {
+                    MessageBox.Show("Song file not found.");
+                    return;
+                }
+
+                _currentSong = song;
+
+                _player.Open(new Uri(fullPath));
+                _player.Play();
+
+                _isPlaying = true;
+
+                txtPlayerTitle.Text = song.Title;
+                txtPlayerArtist.Text = song.Artist;
+                txtPlayPause.Text = "⏸";
+
+                imgPlayerCover.Source = song.Cover;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnPlayPause_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentSong == null)
+                return;
+
+            if (_isPlaying)
+            {
+                _player.Pause();
+                _isPlaying = false;
+                txtPlayPause.Text = "▶";
+            }
+            else
+            {
+                _player.Play();
+                _isPlaying = true;
+                txtPlayPause.Text = "⏸";
+            }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_player.Source != null &&
+                    _player.NaturalDuration.HasTimeSpan)
+                {
+                    TimeSpan current = _player.Position;
+                    TimeSpan total = _player.NaturalDuration.TimeSpan;
+
+                    txtCurrentTime.Text = current.ToString(@"m\:ss");
+                    txtTotalTime.Text = total.ToString(@"m\:ss");
+
+                    double percent =
+                        current.TotalSeconds / total.TotalSeconds;
+
+                    progressFill.Width =
+                        percent * progressBackground.ActualWidth;
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void progressBackground_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (!_player.NaturalDuration.HasTimeSpan)
+                    return;
+
+                Point p = e.GetPosition(progressBackground);
+
+                double percent =
+                    p.X / progressBackground.ActualWidth;
+
+                TimeSpan total =
+                    _player.NaturalDuration.TimeSpan;
+
+                _player.Position = TimeSpan.FromSeconds(
+                    total.TotalSeconds * percent
+                );
+            }
+            catch
+            {
+
+            }
         }
 
     }
