@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace Zen_Music
@@ -10,16 +11,18 @@ namespace Zen_Music
         public static string CurrentTitle { get; set; } = "";
         public static string CurrentArtist { get; set; } = "";
         public static bool IsPlaying { get; set; } = false;
+        public static BitmapImage CurrentCover { get; set; }
 
-        public static void PlaySong(string fileUrl, string title, string artist)
+        public static void PlaySong(string path, string title, string artist, BitmapImage cover)
         {
-            if (string.IsNullOrWhiteSpace(fileUrl)) return;
-
-            Player.Open(new Uri(fileUrl));
+            Player.Open(new Uri(path));
             Player.Play();
-            IsPlaying = true;
+
             CurrentTitle = title;
             CurrentArtist = artist;
+            CurrentCover = cover;
+
+            IsPlaying = true;
         }
 
         public static void TogglePlayPause()

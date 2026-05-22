@@ -54,6 +54,14 @@ namespace Zen_Music
             _timer.Interval = TimeSpan.FromMilliseconds(100);
             _timer.Tick += Timer_Tick;
             _timer.Start();
+
+            if (!string.IsNullOrWhiteSpace(PlayerService.CurrentTitle))
+            {
+                txtPlayerTitle.Text = PlayerService.CurrentTitle;
+                txtPlayerArtist.Text = PlayerService.CurrentArtist;
+                txtPlayPause.Text = PlayerService.IsPlaying ? "⏸" : "▶";
+                imgPlayerCover.Source = PlayerService.CurrentCover;
+            }
         }
 
         private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
@@ -487,8 +495,8 @@ namespace Zen_Music
                 return;
             }
 
-            _currentSong = song;
-            PlayerService.PlaySong(fullPath, song.Title, song.Artist);
+            _currentSong = song; 
+            PlayerService.PlaySong(fullPath, song.Title, song.Artist, song.Cover);
 
             txtPlayerTitle.Text = song.Title;
             txtPlayerArtist.Text = song.Artist;
@@ -498,7 +506,7 @@ namespace Zen_Music
 
         private void btnPlayPause_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentSong == null) return;
+            
             PlayerService.TogglePlayPause();
             txtPlayPause.Text = PlayerService.IsPlaying ? "⏸" : "▶";
         }

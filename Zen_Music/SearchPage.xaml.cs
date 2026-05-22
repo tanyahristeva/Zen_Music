@@ -53,6 +53,7 @@ namespace Zen_Music
             _timer.Interval = TimeSpan.FromMilliseconds(100);
             _timer.Tick += Timer_Tick;
             _timer.Start();
+            imgPlayerCover.Source = PlayerService.CurrentCover;
 
             // Показваме текущо пускана песен ако има такава
             if (!string.IsNullOrWhiteSpace(PlayerService.CurrentTitle))
@@ -60,6 +61,8 @@ namespace Zen_Music
                 txtPlayerTitle.Text = PlayerService.CurrentTitle;
                 txtPlayerArtist.Text = PlayerService.CurrentArtist;
                 txtPlayPause.Text = PlayerService.IsPlaying ? "⏸" : "▶";
+
+
             }
         }
 
@@ -641,7 +644,7 @@ namespace Zen_Music
                     string fullPath = System.IO.Path.Combine(
                         AppDomain.CurrentDomain.BaseDirectory, song.FileUrl);
 
-                    PlayerService.PlaySong(fullPath, song.Title, song.Artist);
+                    PlayerService.PlaySong(fullPath, song.Title, song.Artist, song.Cover);
                     txtPlayerTitle.Text = song.Title;
                     txtPlayerArtist.Text = song.Artist;
                     txtPlayPause.Text = "⏸";
