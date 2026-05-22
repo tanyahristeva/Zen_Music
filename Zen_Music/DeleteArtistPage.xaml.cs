@@ -50,10 +50,11 @@ namespace Zen_Music
                     // ПРОМЯНА: Търсим Image_URL вместо Image_Data
                     string query = @"
                         SELECT a.ID, a.Name, a.Image_URL,
-                               MIN(al.Release_Date) AS SinceYear
+                                COUNT(DISTINCT aa.Album_ID) AS AlbumCount,
+                                COUNT(DISTINCT sa.Song_ID)  AS SongCount
                         FROM Artists a
                         LEFT JOIN AlbumArtists aa ON aa.Artist_ID = a.ID
-                        LEFT JOIN Albums al        ON al.ID = aa.Album_ID
+                        LEFT JOIN SongArtists  sa ON sa.Artist_ID = a.ID
                         GROUP BY a.ID, a.Name, a.Image_URL
                         ORDER BY a.Name";
 
@@ -65,9 +66,9 @@ namespace Zen_Music
                         int idx = 1;
                         foreach (DataRow row in dt.Rows)
                         {
-                            string since = row["SinceYear"] != DBNull.Value
-                                ? $"since {row["SinceYear"]}"
-                                : "";
+                            int albums = Convert.ToInt32(row["AlbumCount"]);
+                            int songs = Convert.ToInt32(row["SongCount"]);
+                            string since = $"{albums} album{(albums == 1 ? "" : "s")}  •  {songs} song{(songs == 1 ? "" : "s")}";
 
                             // Взимаме пътя към снимката, ако има такъв
                             string imagePath = row["Image_URL"] != DBNull.Value

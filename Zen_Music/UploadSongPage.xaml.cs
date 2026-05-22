@@ -22,12 +22,6 @@ namespace Zen_Music
             LoadAlbumsDropdown();
         }
 
-        private void TitleBar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == System.Windows.Input.MouseButton.Left)
-                DragMove();
-        }
-
         // --- ЗАРЕЖДА АРТИСТИТЕ ---
         private void LoadArtistsDropdown()
         {

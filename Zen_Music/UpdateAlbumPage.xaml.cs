@@ -23,14 +23,29 @@ namespace Zen_Music.AlbumPages
             public override string ToString() => Title;
         }
 
-      
+        private class ArtistItem
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public override string ToString() => Name;
+        }
+
+        private class GenreItem
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public override string ToString() => Name;
+        }
+
 
         public UpdateAlbumPage(int albumId)
         {
             InitializeComponent();
             _selectedAlbumId = albumId;
+            LoadArtists();
+            LoadGenres();
             LoadAlbumDetails(albumId);
-           
+
         }
 
         
@@ -40,7 +55,67 @@ namespace Zen_Music.AlbumPages
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
 
-        
+        private void LoadArtists()
+        {
+            try
+            {
+                string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(cs))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT ID, Name FROM Artists ORDER BY Name", conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            comboBoxArtist.Items.Add(new ArtistItem
+                            {
+                                Id = reader.GetInt32(0),
+                                Name = reader.GetString(1)
+                            });
+                        }
+                    }
+                }
+                comboBoxArtist.DisplayMemberPath = "Name";
+                comboBoxArtist.SelectedValuePath = "Id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading artists: " + ex.Message,
+                                "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void LoadGenres()
+        {
+            try
+            {
+                string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(cs))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT ID, Name FROM Genres ORDER BY Name", conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            comboBoxGenre.Items.Add(new GenreItem
+                            {
+                                Id = reader.GetInt32(0),
+                                Name = reader.GetString(1)
+                            });
+                        }
+                    }
+                }
+                comboBoxGenre.DisplayMemberPath = "Name";
+                comboBoxGenre.SelectedValuePath = "Id";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading genres: " + ex.Message,
+                                "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         private void LoadAlbumDetails(int id)
         {
@@ -50,8 +125,18 @@ namespace Zen_Music.AlbumPages
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(
-                        "SELECT Title, Release_Date, Cover_URL FROM Albums WHERE ID = @Id", conn))
+                    string query = @"
+                            SELECT a.Title, a.Release_Date, a.Cover_URL,
+                                    aa.Artist_ID,
+                                    (SELECT COUNT(*) FROM Songs WHERE Album_ID = a.ID) AS SongCount,
+                                    (SELECT TOP 1 Genre_ID FROM SongGenres sg
+                                    JOIN Songs s ON s.ID = sg.Song_ID
+                                    WHERE s.Album_ID = a.ID) AS Genre_ID
+                            FROM Albums a
+                            LEFT JOIN AlbumArtists aa ON aa.Album_ID = a.ID
+                            WHERE a.ID = @Id";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Id", id);
                         using (SqlDataReader reader = cmd.ExecuteReader())
@@ -62,6 +147,35 @@ namespace Zen_Music.AlbumPages
 
                                 textBoxYear.Text = reader["Release_Date"] != DBNull.Value
                                     ? ((DateTime)reader["Release_Date"]).Year.ToString() : "";
+
+                                textBoxNumberOfSongs.Text = reader["SongCount"].ToString();
+
+                                // Избираме артиста в ComboBox
+                                if (reader["Artist_ID"] != DBNull.Value)
+                                {
+                                    int artistId = Convert.ToInt32(reader["Artist_ID"]);
+                                    foreach (ArtistItem item in comboBoxArtist.Items)
+                                    {
+                                        if (item.Id == artistId)
+                                        {
+                                            comboBoxArtist.SelectedItem = item;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (reader["Genre_ID"] != DBNull.Value)
+                                {
+                                    int genreId = Convert.ToInt32(reader["Genre_ID"]);
+                                    foreach (GenreItem item in comboBoxGenre.Items)
+                                    {
+                                        if (item.Id == genreId)
+                                        {
+                                            comboBoxGenre.SelectedItem = item;
+                                            break;
+                                        }
+                                    }
+                                }
 
                                 if (reader["Cover_URL"] != DBNull.Value)
                                 {
@@ -75,15 +189,9 @@ namespace Zen_Music.AlbumPages
                                         bmp.EndInit();
                                         imageCover.Source = bmp;
                                     }
-                                    else
-                                    {
-                                        imageCover.Source = null;
-                                    }
+                                    else imageCover.Source = null;
                                 }
-                                else
-                                {
-                                    imageCover.Source = null;
-                                }
+                                else imageCover.Source = null;
 
                                 _isNewImageSelected = false;
                                 _selectedImagePath = "";
