@@ -91,6 +91,7 @@
     <Compile Include="Like.cs" />
     <Compile Include="PasswordHelper.cs" />
     <Compile Include="Play.cs" />
+    <Compile Include="PlayerService.cs" />
     <Compile Include="Playlist.cs" />
     <Compile Include="PlaylistSong.cs" />
     <Compile Include="Role.cs" />

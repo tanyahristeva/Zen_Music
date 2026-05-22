@@ -41,9 +41,7 @@ namespace Zen_Music
 
         private List<EventCard> _events = new List<EventCard>();
         private int _currentEventIndex = 0;
-        private MediaPlayer _player = new MediaPlayer();
         private SongCard _currentSong;
-        private bool _isPlaying = false;
         private DispatcherTimer _timer = new DispatcherTimer();
 
         public HomePageMain()
@@ -478,115 +476,63 @@ namespace Zen_Music
 
         private void PlaySong(SongCard song)
         {
-            try
+            if (song == null || string.IsNullOrWhiteSpace(song.FileUrl)) return;
+
+            string fullPath = System.IO.Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, song.FileUrl);
+
+            if (!System.IO.File.Exists(fullPath))
             {
-                if (song == null)
-                    return;
-
-                if (string.IsNullOrWhiteSpace(song.FileUrl))
-                {
-                    MessageBox.Show("No file path.");
-                    return;
-                }
-
-                string fullPath = Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    song.FileUrl
-                );
-
-                if (!File.Exists(fullPath))
-                {
-                    MessageBox.Show("Song file not found.");
-                    return;
-                }
-
-                _currentSong = song;
-
-                _player.Open(new Uri(fullPath));
-                _player.Play();
-
-                _isPlaying = true;
-
-                txtPlayerTitle.Text = song.Title;
-                txtPlayerArtist.Text = song.Artist;
-                txtPlayPause.Text = "⏸";
-
-                imgPlayerCover.Source = song.Cover;
+                MessageBox.Show("Song file not found.");
+                return;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
+            _currentSong = song;
+            PlayerService.PlaySong(fullPath, song.Title, song.Artist);
+
+            txtPlayerTitle.Text = song.Title;
+            txtPlayerArtist.Text = song.Artist;
+            txtPlayPause.Text = "⏸";
+            imgPlayerCover.Source = song.Cover;
         }
 
         private void btnPlayPause_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentSong == null)
-                return;
-
-            if (_isPlaying)
-            {
-                _player.Pause();
-                _isPlaying = false;
-                txtPlayPause.Text = "▶";
-            }
-            else
-            {
-                _player.Play();
-                _isPlaying = true;
-                txtPlayPause.Text = "⏸";
-            }
+            if (_currentSong == null) return;
+            PlayerService.TogglePlayPause();
+            txtPlayPause.Text = PlayerService.IsPlaying ? "⏸" : "▶";
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             try
             {
-                if (_player.Source != null &&
-                    _player.NaturalDuration.HasTimeSpan)
+                var player = PlayerService.Player;
+                if (player.Source != null && player.NaturalDuration.HasTimeSpan)
                 {
-                    TimeSpan current = _player.Position;
-                    TimeSpan total = _player.NaturalDuration.TimeSpan;
-
+                    TimeSpan current = player.Position;
+                    TimeSpan total = player.NaturalDuration.TimeSpan;
                     txtCurrentTime.Text = current.ToString(@"m\:ss");
                     txtTotalTime.Text = total.ToString(@"m\:ss");
-
-                    double percent =
-                        current.TotalSeconds / total.TotalSeconds;
-
-                    progressFill.Width =
-                        percent * progressBackground.ActualWidth;
+                    progressFill.Width = (current.TotalSeconds / total.TotalSeconds)
+                                          * progressBackground.ActualWidth;
                 }
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
         private void progressBackground_MouseDown(object sender, MouseButtonEventArgs e)
         {
             try
             {
-                if (!_player.NaturalDuration.HasTimeSpan)
-                    return;
-
+                var player = PlayerService.Player;
+                if (!player.NaturalDuration.HasTimeSpan) return;
                 Point p = e.GetPosition(progressBackground);
-
-                double percent =
-                    p.X / progressBackground.ActualWidth;
-
-                TimeSpan total =
-                    _player.NaturalDuration.TimeSpan;
-
-                _player.Position = TimeSpan.FromSeconds(
-                    total.TotalSeconds * percent
-                );
+                double percent = p.X / progressBackground.ActualWidth;
+                player.Position = TimeSpan.FromSeconds(
+                    player.NaturalDuration.TimeSpan.TotalSeconds * percent);
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
     }

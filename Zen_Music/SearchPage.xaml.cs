@@ -19,6 +19,7 @@ namespace Zen_Music
             public string Title { get; set; }
             public string Artist { get; set; }
             public string Duration { get; set; }
+            public string FileUrl { get; set; }
             public BitmapImage Cover { get; set; }
             public bool IsLiked { get; set; }
             public bool IsDownloaded { get; set; }
@@ -48,7 +49,60 @@ namespace Zen_Music
             txtSearch.Text = initialQuery;
             if (!string.IsNullOrWhiteSpace(initialQuery))
                 Search();
+
+            _timer.Interval = TimeSpan.FromMilliseconds(100);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+
+            // Показваме текущо пускана песен ако има такава
+            if (!string.IsNullOrWhiteSpace(PlayerService.CurrentTitle))
+            {
+                txtPlayerTitle.Text = PlayerService.CurrentTitle;
+                txtPlayerArtist.Text = PlayerService.CurrentArtist;
+                txtPlayPause.Text = PlayerService.IsPlaying ? "⏸" : "▶";
+            }
         }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                var player = PlayerService.Player;
+                if (player.Source != null && player.NaturalDuration.HasTimeSpan)
+                {
+                    TimeSpan current = player.Position;
+                    TimeSpan total = player.NaturalDuration.TimeSpan;
+                    txtCurrentTime.Text = current.ToString(@"m\:ss");
+                    txtTotalTime.Text = total.ToString(@"m\:ss");
+                    progressFill.Width = (current.TotalSeconds / total.TotalSeconds)
+                                          * progressBackground.ActualWidth;
+                }
+            }
+            catch { }
+        }
+
+        private void btnPlayPause_Click(object sender, RoutedEventArgs e)
+        {
+            PlayerService.TogglePlayPause();
+            txtPlayPause.Text = PlayerService.IsPlaying ? "⏸" : "▶";
+        }
+
+        private void progressBackground_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var player = PlayerService.Player;
+                if (!player.NaturalDuration.HasTimeSpan) return;
+                Point p = e.GetPosition(progressBackground);
+                double percent = p.X / progressBackground.ActualWidth;
+                player.Position = TimeSpan.FromSeconds(
+                    player.NaturalDuration.TimeSpan.TotalSeconds * percent);
+            }
+            catch { }
+        }
+
+
+
 
         private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -103,6 +157,7 @@ namespace Zen_Music
                                 list.Add(new SongResult
                                 {
                                     SongId = Convert.ToInt32(row["ID"]),
+                                    FileUrl = row["File_URL"] != DBNull.Value ? row["File_URL"].ToString() : "",
                                     Title = row["Title"].ToString(),
                                     Artist = row["ArtistName"] != DBNull.Value
                                              ? row["ArtistName"].ToString() : "",
@@ -127,7 +182,7 @@ namespace Zen_Music
         private string BuildSongQuery()
         {
             string query = @"
-                SELECT s.ID, s.Title, s.Duration_Sec, s.Image_Data, s.Is_Explicit,
+                SELECT s.ID, s.Title, s.Duration_Sec, s.File_URL, s.Image_Data, s.Is_Explicit,
                        ar.Name AS ArtistName,
                        al.Release_Date,
                        g.Name AS GenreName,
@@ -539,7 +594,8 @@ namespace Zen_Music
             catch { return null; }
         }
 
-
+        private System.Windows.Threading.DispatcherTimer _timer
+                = new System.Windows.Threading.DispatcherTimer();
         private bool _isFullScreen = false;
         private WindowState _prevState;
 
@@ -572,5 +628,27 @@ namespace Zen_Music
                 ? Visibility.Collapsed
                 : Visibility.Visible;
         }
+
+        private void PlaySong_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int songId)
+            {
+                if (listSongs.ItemsSource is System.Collections.Generic.List<SongResult> songs)
+                {
+                    var song = songs.Find(s => s.SongId == songId);
+                    if (song == null || string.IsNullOrWhiteSpace(song.FileUrl)) return;
+
+                    string fullPath = System.IO.Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory, song.FileUrl);
+
+                    PlayerService.PlaySong(fullPath, song.Title, song.Artist);
+                    txtPlayerTitle.Text = song.Title;
+                    txtPlayerArtist.Text = song.Artist;
+                    txtPlayPause.Text = "⏸";
+                    imgPlayerCover.Source = song.Cover;
+                }
+            }
+        }
+
     }
 }
