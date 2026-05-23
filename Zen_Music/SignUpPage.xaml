@@ -181,7 +181,11 @@
                             <TextBox Grid.Column="1" x:Name="txtUsername"
                                      Style="{StaticResource ZenInput}"/>
                         </Grid>
-
+                        <TextBlock x:Name="txtUsernameError"
+           Foreground="#FF6B6B"
+           FontSize="12"
+           Margin="4,2,0,8"
+           Visibility="Collapsed"/>
                         <!-- Email -->
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
@@ -194,6 +198,11 @@
                             <TextBox Grid.Column="1" x:Name="txtEmail"
                                      Style="{StaticResource ZenInput}"/>
                         </Grid>
+                        <TextBlock x:Name="txtEmailError"
+           Foreground="#FF6B6B"
+           FontSize="12"
+           Margin="4,2,0,8"
+           Visibility="Collapsed"/>
 
                         <!-- Password -->
                         <Grid Margin="0,0,0,20">
@@ -207,6 +216,13 @@
                             <PasswordBox Grid.Column="1" x:Name="txtPassword"
                                          Style="{StaticResource ZenPassword}"/>
                         </Grid>
+                        <TextBlock x:Name="txtPasswordError"
+           Foreground="#FF6B6B"
+           FontSize="12"
+           Margin="4,2,0,8"
+           Visibility="Collapsed"/>
+
+                        
 
                         <!-- Already a member + Sign Up -->
                         <Grid>
