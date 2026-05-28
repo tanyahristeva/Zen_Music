@@ -19,8 +19,6 @@ namespace Zen_Music
         private List<int> _selectedSongIds = new List<int>();
         private List<int> _selectedAlbumIds = new List<int>();
 
-
-        // ViewModel за ComboBox
         public class ArtistItem
         {
             public int Id { get; set; }
@@ -48,7 +46,6 @@ namespace Zen_Music
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
 
-        // ── 1. Зарежда артистите в ComboBox ─────────────────────────────────
         private void LoadArtistsDropdown()
         {
             try
@@ -73,9 +70,6 @@ namespace Zen_Music
                                 ID = Convert.ToInt32(row["ID"]),
                                 Name = row["Name"].ToString()
                             });
-
-                        //comboBoxSelectArtist.ItemsSource = list;
-                        //comboBoxSelectArtist.SelectedIndex = 0;
                     }
                 }
             }
@@ -86,19 +80,6 @@ namespace Zen_Music
             }
         }
 
-        // ── 2. Избор на артист ───────────────────────────────────────────────
-       // private void comboBoxSelectArtist_SelectionChanged(object sender,
-        //System.Windows.Controls.SelectionChangedEventArgs e)
-        //{
-         //   if (comboBoxSelectArtist.SelectedItem is Artist artist)
-           // {
-            //    _selectedArtistId = artist.ID;
-            //    if (artist.ID == -1) { ClearFields(); return; }
-            //    LoadArtistDetails(artist.ID);
-           // }
-       // }
-
-        // ── 3. Зарежда данните на артиста ────────────────────────────────────
         private void LoadArtistDetails(int id)
         {
             try
@@ -107,7 +88,6 @@ namespace Zen_Music
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     conn.Open();
-                    // ПРОМЯНА 1: Търсим Image_URL вместо Image_Data
                     using (SqlCommand cmd = new SqlCommand(
                         "SELECT Name, Bio, Image_URL FROM Artists WHERE ID = @Id", conn))
                     {
@@ -120,7 +100,6 @@ namespace Zen_Music
                                 textBoxDescription.Text = reader["Bio"] != DBNull.Value
                                                           ? reader["Bio"].ToString() : "";
 
-                                // ПРОМЯНА 2: Зареждаме снимката от пътя към файла
                                 if (reader["Image_URL"] != DBNull.Value)
                                 {
                                     string imagePath = reader["Image_URL"].ToString();
@@ -135,7 +114,7 @@ namespace Zen_Music
                                     }
                                     else
                                     {
-                                        imageArtist.Source = null; // Файлът е бил изтрит/преместен
+                                        imageArtist.Source = null;
                                     }
                                 }
                                 else
@@ -180,7 +159,6 @@ namespace Zen_Music
                     image.CacheOption = BitmapCacheOption.OnLoad;
                     image.EndInit();
 
-                    // Add this line to return the successfully created image!
                     return image;
                 }
             }
@@ -190,7 +168,6 @@ namespace Zen_Music
             }
         }
 
-        // ── 4. Качване на нова снимка ────────────────────────────────────────
         private void buttonUpload_Click(object sender, RoutedEventArgs e)
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
@@ -212,7 +189,6 @@ namespace Zen_Music
             }
         }
 
-        // ── Placeholders ─────────────────────────────────────────────────────
         private void buttonSelectSongs_Click(object sender, RoutedEventArgs e)
             => MessageBox.Show("Song selection dialog – coming soon.", "Select Songs",
                                MessageBoxButton.OK, MessageBoxImage.Information);
@@ -221,7 +197,6 @@ namespace Zen_Music
             => MessageBox.Show("Album selection dialog – coming soon.", "Select Albums",
                                MessageBoxButton.OK, MessageBoxImage.Information);
 
-        // ── 5. Запазване ─────────────────────────────────────────────────────
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedArtistId == -1)
@@ -259,7 +234,6 @@ namespace Zen_Music
                                                             ? (object)DBNull.Value : bio);
                         if (_isNewImageSelected)
                         {
-                            // ПРОМЯНА 4: Подаваме стринга с пътя, вместо File.ReadAllBytes
                             cmd.Parameters.AddWithValue("@Img", _selectedImagePath);
                         }
 

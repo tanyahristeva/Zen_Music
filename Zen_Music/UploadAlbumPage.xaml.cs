@@ -15,7 +15,6 @@ namespace Zen_Music.AlbumPages
         private string _selectedImagePath = "";
         private string _selectedFilePath = "";
 
-        // Прости ViewModel-и за ComboBox-овете
         private class DropdownItem
         {
             public int Id { get; set; }
@@ -35,7 +34,6 @@ namespace Zen_Music.AlbumPages
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
 
-        // ── Зарежда артистите ────────────────────────────────────────────────
         private void LoadArtistsDropdown()
         {
             try
@@ -73,7 +71,6 @@ namespace Zen_Music.AlbumPages
             }
         }
 
-        // ── Зарежда жанровете ────────────────────────────────────────────────
         private void LoadGenresDropdown()
         {
             try
@@ -111,7 +108,6 @@ namespace Zen_Music.AlbumPages
             }
         }
 
-        // ── Качване на корица ────────────────────────────────────────────────
         private void buttonUpload_Click(object sender, RoutedEventArgs e)
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
@@ -131,7 +127,6 @@ namespace Zen_Music.AlbumPages
             }
         }
 
-        // ── Избор на файл ────────────────────────────────────────────────────
         private void buttonSelectFile_Click(object sender, RoutedEventArgs e)
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
@@ -147,10 +142,8 @@ namespace Zen_Music.AlbumPages
             }
         }
 
-        // ── Запазване ────────────────────────────────────────────────────────
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
-            // Валидация
             string title = textBoxAlbumName.Text.Trim();
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -191,7 +184,6 @@ namespace Zen_Music.AlbumPages
                 yearValue = parsedYear;
             }
 
-            // Запис
             try
             {
                 string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
@@ -202,7 +194,6 @@ namespace Zen_Music.AlbumPages
                     {
                         try
                         {
-                            // ПРОМЯНА 1: Оставяме само колоните, които реално съществуват в таблицата Albums
                             string insertAlbum = @"
                                 INSERT INTO Albums (Title, Release_Date, Cover_URL)
                                 OUTPUT INSERTED.ID
@@ -213,7 +204,6 @@ namespace Zen_Music.AlbumPages
                             {
                                 cmd.Parameters.AddWithValue("@Title", title);
 
-                                // ПРОМЯНА 2: Конвертираме въведената година (int) във валидна дата (Date), напр. 2024-01-01
                                 if (yearValue is int year)
                                 {
                                     cmd.Parameters.AddWithValue("@Date", new DateTime(year, 1, 1));
@@ -223,14 +213,12 @@ namespace Zen_Music.AlbumPages
                                     cmd.Parameters.AddWithValue("@Date", DBNull.Value);
                                 }
 
-                                // ПРОМЯНА 3: Записваме текстовия път към снимката, вместо масив от байтове
                                 cmd.Parameters.AddWithValue("@CoverURL", string.IsNullOrWhiteSpace(_selectedImagePath)
                                                                          ? (object)DBNull.Value : _selectedImagePath);
 
                                 newAlbumId = (int)cmd.ExecuteScalar();
                             }
 
-                            // Връзка Албум ↔ Артист
                             using (SqlCommand cmd = new SqlCommand(
                                 "INSERT INTO AlbumArtists (Album_ID, Artist_ID) VALUES (@AlbumId, @ArtistId)",
                                 conn, tx))

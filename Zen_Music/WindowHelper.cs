@@ -4,7 +4,6 @@ namespace Zen_Music
 {
     public static class WindowHelper
     {
-        // Запазва размера/позицията преди навигация
         public static void SaveState(Window w)
         {
             App.WinWidth = w.Width;
@@ -13,7 +12,6 @@ namespace Zen_Music
             App.WinTop = w.Top;
         }
 
-        // Прилага запазеното състояние + fullscreen ако трябва
         public static void ApplyState(Window w)
         {
             w.Width = App.WinWidth;
@@ -25,7 +23,6 @@ namespace Zen_Music
                 w.WindowState = WindowState.Maximized;
         }
 
-        // Toggle fullscreen — работи от всеки прозорец
         public static void ToggleFullScreen(Window w)
         {
             if (!App.IsFullScreen)

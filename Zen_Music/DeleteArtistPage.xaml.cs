@@ -17,10 +17,9 @@ namespace Zen_Music
             public int ArtistId { get; set; }
             public int RowIndex { get; set; }
             public string Name { get; set; }
-            public string Since { get; set; }   // "since YYYY"
+            public string Since { get; set; }
             public BitmapImage Photo { get; set; }
 
-            // Застраховка за правилно показване, ако се ползва ComboBox/List
             public override string ToString() => Name;
         }
 
@@ -38,7 +37,6 @@ namespace Zen_Music
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
 
-        // ── Зарежда всички артисти ───────────────────────────────────────────
         private void LoadArtists()
         {
             _allArtists.Clear();
@@ -47,7 +45,6 @@ namespace Zen_Music
                 string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
-                    // ПРОМЯНА: Търсим Image_URL вместо Image_Data
                     string query = @"
                         SELECT a.ID, a.Name, a.Image_URL,
                                 COUNT(DISTINCT aa.Album_ID) AS AlbumCount,
@@ -70,7 +67,6 @@ namespace Zen_Music
                             int songs = Convert.ToInt32(row["SongCount"]);
                             string since = $"{albums} album{(albums == 1 ? "" : "s")}  •  {songs} song{(songs == 1 ? "" : "s")}";
 
-                            // Взимаме пътя към снимката, ако има такъв
                             string imagePath = row["Image_URL"] != DBNull.Value
                                 ? row["Image_URL"].ToString()
                                 : null;
@@ -81,7 +77,7 @@ namespace Zen_Music
                                 RowIndex = idx++,
                                 Name = row["Name"].ToString(),
                                 Since = since,
-                                Photo = LoadImageFromPath(imagePath) // Зареждаме от пътя
+                                Photo = LoadImageFromPath(imagePath)
                             });
                         }
                     }
@@ -102,7 +98,6 @@ namespace Zen_Music
             listViewArtists.ItemsSource = artists;
         }
 
-        // ── Реално-времево търсене ───────────────────────────────────────────
         private void textBoxSearch_TextChanged(object sender,
             System.Windows.Controls.TextChangedEventArgs e)
         {
@@ -112,7 +107,6 @@ namespace Zen_Music
             PopulateList(_allArtists.FindAll(a => a.Name.ToLower().Contains(q)));
         }
 
-        // ── Изтриване чрез иконата в реда ───────────────────────────────────
         private void DeleteRow_Click(object sender, RoutedEventArgs e)
         {
             if (sender is System.Windows.Controls.Button btn && btn.Tag is int id)
@@ -122,7 +116,6 @@ namespace Zen_Music
             }
         }
 
-        // ── Изтриване на селектирания ред чрез бутона Delete ─────────────────
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
             if (listViewArtists.SelectedItem is ArtistItem selected)
@@ -132,7 +125,6 @@ namespace Zen_Music
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        // ── Обща логика ──────────────────────────────────────────────────────
         private void ConfirmAndDelete(int artistId, string name)
         {
             var result = MessageBox.Show(
@@ -193,7 +185,6 @@ namespace Zen_Music
             this.Close();
         }
 
-        // ПРОМЯНА: Нов метод за зареждане на снимки от път (string)
         private static BitmapImage LoadImageFromPath(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))

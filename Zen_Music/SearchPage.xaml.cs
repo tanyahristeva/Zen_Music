@@ -55,7 +55,6 @@ namespace Zen_Music
             _timer.Start();
             imgPlayerCover.Source = PlayerService.CurrentCover;
 
-            // Показваме текущо пускана песен ако има такава
             if (!string.IsNullOrWhiteSpace(PlayerService.CurrentTitle))
             {
                 txtPlayerTitle.Text = PlayerService.CurrentTitle;
@@ -242,7 +241,7 @@ namespace Zen_Music
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     conn.Open();
-                    string query = BuildAlbumQuery(); // Извиква новия метод за филтри
+                    string query = BuildAlbumQuery();
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -316,10 +315,6 @@ namespace Zen_Music
             return query;
         }
 
-
-
-
-        // ── Филтри ───────────────────────────────────────────────────────────
         private void btnGenre_Click(object sender, RoutedEventArgs e)
         {
             if (!(sender is Button btn)) return;
@@ -328,7 +323,6 @@ namespace Zen_Music
 
             if (genre == "All")
             {
-                // Натиснат е All — изчисти всичко и маркирай само All
                 _selectedGenres.Clear();
                 foreach (var child in wrap.Children)
                 {
@@ -343,7 +337,6 @@ namespace Zen_Music
             }
             else
             {
-                // Натиснат е конкретен жанр — махни All ако е избран
                 foreach (var child in wrap.Children)
                 {
                     if (child is Button b && b.Tag?.ToString() == "All")
@@ -354,7 +347,6 @@ namespace Zen_Music
 
                 if (_selectedGenres.Contains(genre))
                 {
-                    // Вече е избран — махни го
                     _selectedGenres.Remove(genre);
                     btn.Background = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -362,7 +354,6 @@ namespace Zen_Music
                 }
                 else
                 {
-                    // Добави го
                     _selectedGenres.Add(genre);
                     btn.Background = new System.Windows.Media.SolidColorBrush(
                         (System.Windows.Media.Color)System.Windows.Media.ColorConverter
@@ -569,7 +560,6 @@ namespace Zen_Music
             this.Close();
         }
 
-        // tuk
         private void txtZen_Click(object sender, MouseButtonEventArgs e)
         {
             WindowHelper.SaveState(this);
@@ -624,7 +614,6 @@ namespace Zen_Music
             }
         }
 
-        // filters button
         private void btnToggleFilters_Click(object sender, RoutedEventArgs e)
         {
             filtersPanel.Visibility = filtersPanel.Visibility == Visibility.Visible

@@ -12,7 +12,6 @@ namespace Zen_Music
 {
     public partial class DeleteSongPage : Window
     {
-        // ViewModel за всеки ред в списъка
         public class SongItem
         {
             public int SongId { get; set; }
@@ -24,7 +23,6 @@ namespace Zen_Music
             public BitmapImage CoverImage { get; set; }
         }
 
-        // Пълен кеш на всички песни (за филтриране)
         private List<SongItem> _allSongs = new List<SongItem>();
 
         public DeleteSongPage()
@@ -33,14 +31,12 @@ namespace Zen_Music
             LoadSongs();
         }
 
-        // ── Drag на прозореца ────────────────────────────────────────────────
         private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
 
-        // ── Зарежда всички песни от базата ──────────────────────────────────
         private void LoadSongs()
         {
             _allSongs.Clear();
@@ -99,7 +95,6 @@ namespace Zen_Music
             PopulateList(_allSongs);
         }
 
-        // ── Конвертира byte[] → BitmapImage ─────────────────────────────────
         private static BitmapImage LoadBitmapFromBytes(byte[] data)
         {
             if (data == null || data.Length == 0) return null;
@@ -112,21 +107,19 @@ namespace Zen_Music
                     bmp.CacheOption = BitmapCacheOption.OnLoad;
                     bmp.StreamSource = ms;
                     bmp.EndInit();
-                    bmp.Freeze(); // безопасно за threads
+                    bmp.Freeze();
                     return bmp;
                 }
             }
             catch { return null; }
         }
 
-        // ── Зарежда списъка ──────────────────────────────────────────────────
         private void PopulateList(List<SongItem> songs)
         {
             listViewSongs.ItemsSource = null;
             listViewSongs.ItemsSource = songs;
         }
 
-        // ── Реално-времево търсене ───────────────────────────────────────────
         private void textBoxSearch_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             string search = textBoxSearch.Text.Trim().ToLower();
@@ -144,7 +137,6 @@ namespace Zen_Music
             PopulateList(filtered);
         }
 
-        // ── Изтриване чрез иконата в реда ───────────────────────────────────
         private void DeleteRow_Click(object sender, RoutedEventArgs e)
         {
             if (sender is System.Windows.Controls.Button btn && btn.Tag is int songId)
@@ -155,7 +147,6 @@ namespace Zen_Music
             }
         }
 
-        // ── Изтриване чрез бутона Save (изтрива селектирания ред) ────────────
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
             if (listViewSongs.SelectedItem is SongItem selected)
@@ -169,7 +160,6 @@ namespace Zen_Music
             }
         }
 
-        // ── Обща логика за потвърждение + изтриване ──────────────────────────
         private void ConfirmAndDelete(int songId, string title)
         {
             var result = MessageBox.Show(
@@ -230,7 +220,6 @@ namespace Zen_Music
             }
         }
 
-        // ── Cancel бутон ────────────────────────────────────────────────────
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;

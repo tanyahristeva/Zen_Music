@@ -13,7 +13,6 @@ namespace Zen_Music
     {
         private string _selectedImagePath = "";
 
-        // Списъци с избрани ID-та (попълват се от диалозите)
         private List<int> _selectedSongIds = new List<int>();
         private List<int> _selectedAlbumIds = new List<int>();
 
@@ -22,14 +21,12 @@ namespace Zen_Music
             InitializeComponent();
         }
 
-        // ── Drag на прозореца ────────────────────────────────────────────────
         private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
 
-        // ── Качване на снимка ────────────────────────────────────────────────
         private void buttonUpload_Click(object sender, RoutedEventArgs e)
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
@@ -52,23 +49,18 @@ namespace Zen_Music
             }
         }
 
-        // ── Избор на песни (placeholder – свърже се с реален диалог) ─────────
         private void buttonSelectSongs_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: отвори диалог за избор на песни и попълни _selectedSongIds
             MessageBox.Show("Song selection dialog – coming soon.",
                             "Select Songs", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // ── Избор на албуми (placeholder) ────────────────────────────────────
         private void buttonSelectAlbums_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: отвори диалог за избор на албуми и попълни _selectedAlbumIds
             MessageBox.Show("Album selection dialog – coming soon.",
                             "Select Albums", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // ── Запазване ────────────────────────────────────────────────────────
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
             string artistName = textBoxArtistName.Text.Trim();
@@ -83,10 +75,6 @@ namespace Zen_Music
 
             try
             {
-                //byte[] imageBytes = null;
-               // if (!string.IsNullOrWhiteSpace(_selectedImagePath))
-                  //  imageBytes = File.ReadAllBytes(_selectedImagePath);
-
                 string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
 
                 using (SqlConnection conn = new SqlConnection(cs))
@@ -96,7 +84,6 @@ namespace Zen_Music
                     {
                         try
                         {
-                            // Вмъкваме артиста
                             string insertArtist = @"
                             INSERT INTO Artists (Name, Bio, Image_URL)
                             OUTPUT INSERTED.ID
@@ -115,7 +102,6 @@ namespace Zen_Music
                                 newArtistId = (int)cmd.ExecuteScalar();
                             }
 
-                            // Свързваме песните (ако има избрани)
                             foreach (int songId in _selectedSongIds)
                             {
                                 using (SqlCommand cmd = new SqlCommand(
@@ -128,7 +114,6 @@ namespace Zen_Music
                                 }
                             }
 
-                            // Свързваме албумите (ако има избрани)
                             foreach (int albumId in _selectedAlbumIds)
                             {
                                 using (SqlCommand cmd = new SqlCommand(
@@ -163,7 +148,6 @@ namespace Zen_Music
             }
         }
 
-        // ── Cancel ───────────────────────────────────────────────────────────
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;

@@ -126,7 +126,7 @@ namespace Zen_Music.AlbumPages
         {
             var updatePage = new UpdateAlbumPage(albumId);
             updatePage.ShowDialog();
-            LoadAlbums(); // Презарежда списъка след затваряне
+            LoadAlbums();
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)

@@ -130,7 +130,6 @@ namespace Zen_Music.AlbumPages
                     {
                         try
                         {
-                            // Изтриваме свързаните записи първо
                             foreach (string table in new[] { "AlbumArtists" })
                             {
                                 using (SqlCommand cmd = new SqlCommand(

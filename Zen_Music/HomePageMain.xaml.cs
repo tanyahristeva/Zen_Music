@@ -69,7 +69,6 @@ namespace Zen_Music
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
 
-        // scroll from anywhere
         private void LeftPanel_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var scrollViewer = sender as ScrollViewer;
@@ -79,7 +78,6 @@ namespace Zen_Music
             e.Handled = true;
         }
 
-        // ── For You: албуми от следвани артисти ─────────────────────────────
         private void LoadForYou()
         {
             try
@@ -117,7 +115,6 @@ namespace Zen_Music
                             });
                         }
 
-                        // Ако няма следвани артисти — зареди случайни
                         if (list.Count == 0)
                             list = LoadRandomAlbums();
 
@@ -168,7 +165,6 @@ namespace Zen_Music
             return list;
         }
 
-        // ── Trending: случайни песни ─────────────────────────────────────────
         private void LoadTrending()
         {
             try
@@ -221,8 +217,6 @@ namespace Zen_Music
             }
         }
 
-
-
         public class PlaylistCard
         {
             public int PlaylistId { get; set; }
@@ -230,48 +224,6 @@ namespace Zen_Music
             public string Creator { get; set; }
             public BitmapImage Cover { get; set; }
         }
-
-        // --- Personalized playlists --- if there are real playlists, this shoud work
-        //private void LoadPlaylists()
-        //{
-        //    try
-        //    {
-        //        string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
-        //        using (SqlConnection conn = new SqlConnection(cs))
-        //        {
-        //            string query = @"
-        //        SELECT TOP 15 p.ID, p.Name, p.Cover_URL, u.Username AS Creator
-        //        FROM Playlists p
-        //        LEFT JOIN Users u ON u.ID = p.Creator_ID
-        //        WHERE p.Is_Public = 1
-        //        ORDER BY NEWID()";
-
-        //            using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
-        //            {
-        //                DataTable dt = new DataTable();
-        //                adapter.Fill(dt);
-
-        //                var list = new List<PlaylistCard>();
-        //                foreach (DataRow row in dt.Rows)
-        //                    list.Add(new PlaylistCard
-        //                    {
-        //                        PlaylistId = Convert.ToInt32(row["ID"]),
-        //                        Name = row["Name"].ToString(),
-        //                        Creator = row["Creator"] != DBNull.Value
-        //                                     ? row["Creator"].ToString() : "",
-        //                        Cover = LoadImageFromPath(row["Cover_URL"] != DBNull.Value
-        //                                     ? row["Cover_URL"].ToString() : null)
-        //                    });
-
-        //                listPlaylists.ItemsSource = list;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Error loading playlists: " + ex.Message);
-        //    }
-        //}
 
         private void LoadPlaylists()
         {
@@ -293,42 +245,8 @@ namespace Zen_Music
         }
 
 
-
-
-        // ── Events ───────────────────────────────────────────────────────────
-        //private void LoadEvents()
-        //{
-        //    try
-        //    {
-        //        string cs = ConfigurationManager.ConnectionStrings["MusicDb"].ConnectionString;
-        //        using (SqlConnection conn = new SqlConnection(cs))
-        //        {
-        //            using (SqlDataAdapter adapter = new SqlDataAdapter(
-        //                "SELECT ID, Title, Image_URL FROM Events", conn))
-        //            {
-        //                DataTable dt = new DataTable();
-        //                adapter.Fill(dt);
-
-        //                foreach (DataRow row in dt.Rows)
-        //                    _events.Add(new EventCard
-        //                    {
-        //                        EventId = Convert.ToInt32(row["ID"]),
-        //                        Title = row["Title"] != DBNull.Value
-        //                                ? row["Title"].ToString() : "",
-        //                        Poster = LoadImageFromPath(row["Image_URL"] != DBNull.Value
-        //                                 ? row["Image_URL"].ToString() : null)
-        //                    });
-        //            }
-        //        }
-        //    }
-        //    catch { }
-
-        //    ShowCurrentEvent();
-        //}
-
         private void LoadEvents()
         {
-            // Тестова снимка — замени пътя с твоя
             imgEvent.Source = LoadImageFromPath(@"C:\Users\azrax\Documents\GitHub\Zen_Music\Zen_Music\pics\dawes_poster.png");
         }
 
@@ -358,16 +276,6 @@ namespace Zen_Music
         {
             this.Close();
         }
-
-        //// button maximize
-        //private void btnMaximize_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (this.WindowState == WindowState.Normal)
-        //        this.WindowState = WindowState.Maximized;
-        //    else
-        //        this.WindowState = WindowState.Normal;
-        //}
-
 
         private static BitmapImage LoadImageFromPath(string path)
         {
@@ -435,8 +343,6 @@ namespace Zen_Music
 
         }
 
-
-        // full screen option
         private bool _isFullScreen = false;
         private WindowState _prevState;
 
@@ -446,8 +352,6 @@ namespace Zen_Music
                 WindowHelper.ToggleFullScreen(this);
         }
 
-
-        // scroll left right
         private void ForYou_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             var sv = sender as ScrollViewer;

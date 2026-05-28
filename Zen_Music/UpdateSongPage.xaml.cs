@@ -51,8 +51,6 @@ namespace Zen_Music
                         empty["ID"] = -1;
                         empty["DisplayName"] = "-- Select a Song --";
                         dt.Rows.InsertAt(empty, 0);
-                        //cmbSelectSong.ItemsSource = dt.DefaultView;
-                        //cmbSelectSong.SelectedIndex = 0;
                     }
                 }
             }
@@ -131,18 +129,6 @@ namespace Zen_Music
             catch (Exception ex) { MessageBox.Show("Error loading albums: " + ex.Message); }
         }
 
-       // private void cmbSelectSong_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        //{
-          //  if (cmbSelectSong.SelectedValue == null) return;
-          //  if (!int.TryParse(cmbSelectSong.SelectedValue.ToString(), out int id) || id == -1)
-           // {
-           //     ClearFields();
-            //    return;
-           // }
-           // selectedSongId = id;
-          //  LoadSongDetails(id);
-       // }
-
         private void LoadSongDetails(int id)
         {
             try
@@ -175,10 +161,8 @@ namespace Zen_Music
                                 cmbGenre.SelectedValue = (int)reader["GenreId"];
                                 cmbAlbum.SelectedValue = (int)reader["AlbumId"];
 
-                                // Load album year
                                 LoadAlbumYear((int)reader["AlbumId"]);
 
-                                // Cover image
                                 if (reader["Image_Data"] != DBNull.Value)
                                 {
                                     byte[] imgData = (byte[])reader["Image_Data"];
@@ -311,7 +295,6 @@ namespace Zen_Music
                     {
                         try
                         {
-                            // 1. Update Songs
                             string updateQuery = isNewImageSelected
                                 ? "UPDATE Songs SET Title=@Title, Duration_Sec=@Dur, Album_ID=@AlbumId, Image_Data=@Img WHERE ID=@Id"
                                 : "UPDATE Songs SET Title=@Title, Duration_Sec=@Dur, Album_ID=@AlbumId WHERE ID=@Id";
@@ -327,7 +310,6 @@ namespace Zen_Music
                                 cmd.ExecuteNonQuery();
                             }
 
-                            // 2. Update Artist
                             if (artistId != -1)
                             {
                                 new SqlCommand($"DELETE FROM SongArtists WHERE Song_ID = {selectedSongId}", conn, transaction).ExecuteNonQuery();
@@ -340,7 +322,6 @@ namespace Zen_Music
                                 }
                             }
 
-                            // 3. Update Genre
                             if (genreId != -1)
                             {
                                 new SqlCommand($"DELETE FROM SongGenres WHERE Song_ID = {selectedSongId}", conn, transaction).ExecuteNonQuery();

@@ -10,6 +10,6 @@ namespace Zen_Music
     {
         public int Song_ID { get; set; }
         public int Artist_ID { get; set; }
-        public string Role { get; set; }// feaute or main artist
+        public string Role { get; set; }
     }
 }

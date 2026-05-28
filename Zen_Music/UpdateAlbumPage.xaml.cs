@@ -150,7 +150,6 @@ namespace Zen_Music.AlbumPages
 
                                 textBoxNumberOfSongs.Text = reader["SongCount"].ToString();
 
-                                // Избираме артиста в ComboBox
                                 if (reader["Artist_ID"] != DBNull.Value)
                                 {
                                     int artistId = Convert.ToInt32(reader["Artist_ID"]);
@@ -274,7 +273,6 @@ namespace Zen_Music.AlbumPages
                 {
                     conn.Open();
 
-                    // Albums
                     string query = _isNewImageSelected
                         ? "UPDATE Albums SET Title=@Title, Release_Date=@Date, Cover_URL=@Img WHERE ID=@Id"
                         : "UPDATE Albums SET Title=@Title, Release_Date=@Date WHERE ID=@Id";
@@ -290,7 +288,6 @@ namespace Zen_Music.AlbumPages
                         cmd.ExecuteNonQuery();
                     }
 
-                    // Update Genre
                     if (comboBoxGenre.SelectedItem is GenreItem selectedGenre)
                     {
                         using (SqlCommand cmdGenre = new SqlCommand(

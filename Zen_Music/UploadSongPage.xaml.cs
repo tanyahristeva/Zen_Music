@@ -22,7 +22,6 @@ namespace Zen_Music
             LoadAlbumsDropdown();
         }
 
-        // --- ЗАРЕЖДА АРТИСТИТЕ ---
         private void LoadArtistsDropdown()
         {
             try
@@ -50,7 +49,6 @@ namespace Zen_Music
             }
         }
 
-        // --- ЗАРЕЖДА ЖАНРОВЕТЕ ---
         private void LoadGenresDropdown()
         {
             try
@@ -78,7 +76,6 @@ namespace Zen_Music
             }
         }
 
-        // --- ЗАРЕЖДА АЛБУМИТЕ ---
         private void LoadAlbumsDropdown()
         {
             try
@@ -106,7 +103,6 @@ namespace Zen_Music
             }
         }
 
-        // --- UPLOAD СНИМКА ---
         private void btnUpload_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog
@@ -120,7 +116,6 @@ namespace Zen_Music
             }
         }
 
-        // --- SELECT ФАЙЛ ---
         private void btnSelectFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog
@@ -134,7 +129,6 @@ namespace Zen_Music
             }
         }
 
-        // --- ALBUM SELECTION CHANGED → зарежда годината ---
         private void cmbAlbum_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (cmbAlbum.SelectedValue == null) return;
@@ -168,7 +162,6 @@ namespace Zen_Music
             }
         }
 
-        // --- SAVE ---
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             string songName = txtSongName.Text.Trim();
@@ -225,7 +218,6 @@ namespace Zen_Music
                     {
                         try
                         {
-                            // 1. Записваме песента
                             string insertSong = @"INSERT INTO Songs (Title, Album_ID, Duration_Sec, File_URL, Is_Explicit, Image_Data)
                                                   OUTPUT INSERTED.ID
                                                   VALUES (@Title, @AlbumId, @Duration, @FileUrl, 0, @ImageData)";
@@ -244,7 +236,6 @@ namespace Zen_Music
                                 newSongId = (int)cmd.ExecuteScalar();
                             }
 
-                            // 2. Артист → SongArtists
                             if (artistId != -1)
                             {
                                 string insertSongArtist = @"INSERT INTO SongArtists (Song_ID, Artist_ID, Role)
@@ -257,7 +248,6 @@ namespace Zen_Music
                                 }
                             }
 
-                            // 3. Жанр → SongGenres
                             if (genreId != -1)
                             {
                                 string insertGenre = @"INSERT INTO SongGenres (Song_ID, Genre_ID)
@@ -292,7 +282,6 @@ namespace Zen_Music
             }
         }
 
-        // --- CANCEL ---
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;

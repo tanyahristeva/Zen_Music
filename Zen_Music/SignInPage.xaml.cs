@@ -59,7 +59,6 @@ namespace Zen_Music
                                 return;
                             }
 
-                            // Запазваме сесията
                             SessionManager.UserId = Convert.ToInt32(reader["ID"]);
                             SessionManager.Username = username;
                         }
