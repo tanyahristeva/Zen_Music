@@ -273,6 +273,8 @@ namespace Zen_Music.AlbumPages
                 using (SqlConnection conn = new SqlConnection(cs))
                 {
                     conn.Open();
+
+                    // Albums
                     string query = _isNewImageSelected
                         ? "UPDATE Albums SET Title=@Title, Release_Date=@Date, Cover_URL=@Img WHERE ID=@Id"
                         : "UPDATE Albums SET Title=@Title, Release_Date=@Date WHERE ID=@Id";
@@ -287,8 +289,20 @@ namespace Zen_Music.AlbumPages
 
                         cmd.ExecuteNonQuery();
                     }
-                }
 
+                    // Update Genre
+                    if (comboBoxGenre.SelectedItem is GenreItem selectedGenre)
+                    {
+                        using (SqlCommand cmdGenre = new SqlCommand(
+                            @"UPDATE SongGenres SET Genre_ID = @GenreId
+                            WHERE Song_ID IN (SELECT ID FROM Songs WHERE Album_ID = @Id)", conn))
+                        {
+                            cmdGenre.Parameters.AddWithValue("@Id", _selectedAlbumId);
+                            cmdGenre.Parameters.AddWithValue("@GenreId", selectedGenre.Id);
+                            cmdGenre.ExecuteNonQuery();
+                        }
+                    }
+                }  
                 MessageBox.Show($"Album '{title}' updated successfully!", "Success",
                                 MessageBoxButton.OK, MessageBoxImage.Information);
                 this.DialogResult = true;

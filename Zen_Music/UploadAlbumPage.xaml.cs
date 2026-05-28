@@ -230,7 +230,7 @@ namespace Zen_Music.AlbumPages
                                 newAlbumId = (int)cmd.ExecuteScalar();
                             }
 
-                            // Връзка Албум ↔ Артист (предполагаме, че таблицата AlbumArtists съществува и е наред)
+                            // Връзка Албум ↔ Артист
                             using (SqlCommand cmd = new SqlCommand(
                                 "INSERT INTO AlbumArtists (Album_ID, Artist_ID) VALUES (@AlbumId, @ArtistId)",
                                 conn, tx))

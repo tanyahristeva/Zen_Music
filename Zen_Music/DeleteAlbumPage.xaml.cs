@@ -53,7 +53,7 @@ namespace Zen_Music.AlbumPages
                         foreach (DataRow row in dt.Rows)
                         {
                             string year = row["Release_Date"] != DBNull.Value
-                                ? $"since {((DateTime)row["Release_Date"]).Year}"
+                                ? $"{((DateTime)row["Release_Date"]).Year}"
                                 : "";
 
                             string coverPath = row["Cover_URL"] != DBNull.Value
